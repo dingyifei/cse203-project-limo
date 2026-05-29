@@ -9,3 +9,23 @@
 ---
 
 <!-- New rows appended below this line. Schema documented in the plan: "Where improvements are recorded" section. -->
+
+## A_baseline — 2026-05-28 17:51   git: 9f12231+a26db16
+Description: failed production run (10k mols, 10 optim steps, generic 1err predictor, broken cycle filter).
+Primary metric: best_dg_actual
+  baseline ➜ this phase: −5.61 ➜ −5.61 kcal/mol   (Δ = 0.00, target ≤ −7.0)
+  prev    ➜ this phase: n/a    ➜ −5.61 kcal/mol   (anchor row)
+Secondary metrics (from limo/outs/*.dlg and the user's run summary):
+  drug_likeness_pass_rate: (to compute in CK eval) — but top-3 hits are polyenes ⇒ near 0%
+  polyene_rate (top-100):  ≥ 0.78 (estimated from top-3 visual inspection)
+  predictor_r_holdout:     n/a (no 2G76-specific predictor yet)
+  validity_rate:           1.00 (SELFIES guarantees)
+  n_distinct_scaffolds:    TBD (Phase 0 eval will compute)
+  funnel: 10000 decoded → 1457 cycles==0 → 753 QED>0.4 → 735 docked
+Gate: ANCHOR — failure is the input to this work.
+Notes: Top-3 SMILES (polyene scaffolds):
+  1. CC=CC=CC=C(C)C=CC=CC(CC1CC=CC1=C)C=CN2C3=CC=CC=C3NC=C2 (ΔG = −5.61, Kd = 77 µM)
+  2. CCC=CC=C(C1CC=CC2=C1C=CC#C2)CC=CN=CC3=CN=NO3 (ΔG = −5.53, Kd = 88 µM)
+  3. C[C@H1]C=CC=CC=CC1=CC=CC=C1C(C)NC2CCCC[C@H1]2CC (ΔG = −5.39, Kd = 112 µM)
+Links: configs/finetune/00_overview.yaml · docs/finetune/00-overview.md
+
