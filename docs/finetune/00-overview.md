@@ -53,3 +53,9 @@ Per-phase ablations measure the contribution of each lever; per-phase Codex revi
 - Improvements log: [IMPROVEMENTS.md](IMPROVEMENTS.md)
 - Manifest of artifacts: [data/MANIFEST.csv](data/MANIFEST.csv)
 - Codex reviews: [reviews/](reviews/)
+- `2026-05-29T03:25:48Z` [ef7765b+812beb9] (Mac.localdomain) **start**
+- `2026-05-29T03:25:48Z` [ef7765b+812beb9] (Mac.localdomain) **end** status=done
+- `2026-05-29T03:32:31Z` [ef7765b+ba87432] (Yifeis-MacBook-Pro-16.local) **start**
+- `2026-05-29T03:32:31Z` [ef7765b+ba87432] (Yifeis-MacBook-Pro-16.local) **end** status=done
+- `2026-05-29T03:32:52Z` [ef7765b+ba87432] (Yifeis-MacBook-Pro-16.local) **start**
+- `2026-05-29T03:32:52Z` [ef7765b+ba87432] (Yifeis-MacBook-Pro-16.local) **end** status=done
