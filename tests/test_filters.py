@@ -103,7 +103,12 @@ def _mol(smiles):
 @pytest.mark.parametrize(
     "name,smiles",
     [
-        ("aspirin", ASPIRIN),
+        pytest.param("aspirin", ASPIRIN, marks=pytest.mark.xfail(
+            reason="aspirin is acetylsalicylic acid — BRENK catalog correctly "
+                   "flags phenol_ester. Aspirin is a marketed drug from 1899; "
+                   "modern lead-discovery filters do reject it. Keeping BRENK "
+                   "because phenol_ester is a real medicinal-chemistry alert.",
+            strict=True)),
         ("ibuprofen", IBUPROFEN),
         ("caffeine", CAFFEINE),
     ],
@@ -244,10 +249,13 @@ def test_ring_ok(name, smiles, expected):
 
 
 def test_filter_passes_clean_drugs():
-    """Marketed drugs without alert groups should pass the FilterCatalog
-    (no PAINS / Brenk / NIH / ZINC match)."""
-    result = utils.one_hots_to_filter(_hots(ASPIRIN, IBUPROFEN, CAFFEINE))
-    assert list(map(int, result)) == [1, 1, 1], f"clean drugs flagged: {result}"
+    """Marketed drugs without alert groups should pass the FilterCatalog.
+
+    Aspirin is excluded — BRENK correctly flags it as phenol_ester (it
+    literally is acetylsalicylic acid). Ibuprofen and caffeine pass cleanly.
+    """
+    result = utils.one_hots_to_filter(_hots(IBUPROFEN, CAFFEINE))
+    assert list(map(int, result)) == [1, 1], f"clean drugs flagged: {result}"
 
 
 def test_filter_rejects_pains_rhodanine():
@@ -278,7 +286,8 @@ _THRESHOLD_VIOLATORS = [
     ("hbd",               "OCC(O)C(O)C(O)C(O)CO",                     "D-mannitol HBD=6 > 5"),
     ("hba",               "OCC1OC(O)C(O)C(O)C1OCC2OC(CO)C(O)C(O)C2O", "disaccharide HBA ≥ 11 > 10"),
     ("qed",               RAW_POLYENE,                                "polyene QED ≪ 0.5"),
-    ("sa",                "O=C1OC2(CCN(CC2)Cc2ccccc2)C2(C1)CCCC2",    "complex spiro SA expected > 4.5"),
+    ("sa",                "[Si]1([Si]([Si]([Si]([Si]1)C(F)(F)F)C(F)(F)F)C(F)(F)F)C(F)(F)F",
+                                                                       "silicon polymer SA ~4.84 > 4.5"),
     ("aromatic_required", "C1CCCCC1",                                 "cyclohexane n_aromatic=0 < 1"),
     ("max_consec_double", EXTRA_POLYENE,                              "6 consec C=C > 4"),
     ("max_consec_triple", POLYYNE,                                    "3 consec C#C > 2"),
@@ -312,7 +321,8 @@ def test_composite_passes_all_via_smiles_to_one_hot(thresholds, dm):
     ``dm`` fixture is included to assert the vocab is loaded before the
     one-hot conversions run (would otherwise KeyError silently)."""
     assert dm.dataset.max_len > 0
-    positives = [ASPIRIN, IBUPROFEN, CAFFEINE]
+    # ASPIRIN excluded — BRENK correctly flags it as phenol_ester.
+    positives = [IBUPROFEN, CAFFEINE]
     negatives = [RAW_POLYENE, POLYYNE]
     hots = [utils.smiles_to_one_hot(s) for s in positives + negatives]
     result = list(map(int, utils.one_hots_to_passes_all(hots, thresholds)))

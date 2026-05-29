@@ -1,7 +1,7 @@
 # Canonical filter thresholds — single source of truth.
 # Read by limo/utils.py:one_hots_to_passes_all and generate_molecules.py's filter chain.
 # Also referenced by tests/test_filters.py.
-mw_min: 200
+mw_min: 150   # Lipinski Ro5 has no MW lower bound; 150 still rejects fragments (<100) but allows aspirin (180), ibuprofen (206), etc.
 mw_max: 500
 rot_bonds_max: 8
 hbd_max: 5

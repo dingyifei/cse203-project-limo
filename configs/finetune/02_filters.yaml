@@ -2,7 +2,7 @@
 phase_id: "02_filters"
 filter_in_loop: "soft"   # {none, soft, hard_log}
 thresholds:
-  mw_min: 200
+  mw_min: 150   # allow aspirin/ibuprofen; still rejects fragments (<100 MW)
   mw_max: 500
   rot_bonds_max: 8
   hbd_max: 5
