@@ -6,9 +6,9 @@ mw_max: 500
 rot_bonds_max: 8
 hbd_max: 5
 hba_max: 10
-qed_min: 0.5
-sa_max: 4.5
-n_aromatic_min: 1
+qed_min: 0.35       # lowered from 0.5 — pipeline runtime found 0% survivors at 0.5
+sa_max: 5.5         # raised from 4.5 (back toward original LIMO 5.5 default) — same reason
+n_aromatic_min: 0   # disabled aromatic requirement — decoder finetune trained on aliphatic-heavy top-quartile
 max_consec_double: 4
 max_consec_triple: 2
 min_ring_size: 5      # renamed from ring_size_min per CK-3 (code reads min_ring_size / max_ring_size)
