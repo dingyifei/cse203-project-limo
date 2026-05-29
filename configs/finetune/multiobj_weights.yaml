@@ -5,4 +5,6 @@
 binding_affinity: 5
 sa: 2
 qed: -4              # lowered from -8; QED alone was too permissive on polyenes
-drug_likeness: -10   # large negative on the new differentiable head (Phase 2d)
+# drug_likeness head was planned in Phase 2 but run.sh phase2() only runs
+# pytest, never trains property_models/drug_likeness.pt. Removed from
+# gradient signal; post-loop composite filter still rejects polyenes hard.
