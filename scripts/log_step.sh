@@ -24,7 +24,10 @@ EVENT="$1"; shift
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 LOG="$REPO_ROOT/docs/finetune/${STEP_ID}.md"
 TS="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-GIT_SHA="$(git -C "$REPO_ROOT" rev-parse --short HEAD 2>/dev/null || echo 'no-git')"
+# Dual SHA: outer repo (docs/configs/scripts) + inner limo/ repo (LIMO code).
+OUTER_SHA="$(git -C "$REPO_ROOT" rev-parse --short HEAD 2>/dev/null || echo 'no-git')"
+INNER_SHA="$(git -C "$REPO_ROOT/limo" rev-parse --short HEAD 2>/dev/null || echo 'no-inner-git')"
+GIT_SHA="${OUTER_SHA}+${INNER_SHA}"
 HOST="$(uname -n | tr -d '[:space:]')"
 
 # Initialize the log file with a header on first write.

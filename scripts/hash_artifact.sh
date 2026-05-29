@@ -41,11 +41,16 @@ printf '%s,%s\n' "$PATH_ARG" "$SHA"
 
 if [ -n "$STEP_ID" ]; then
   TS="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-  GIT_SHA="$(git -C "$REPO_ROOT" rev-parse --short HEAD 2>/dev/null || echo 'no-git')"
+  # Dual SHA: outer repo (docs/configs/scripts) + inner limo/ repo (LIMO code) since
+  # limo/ is itself a git repo (upstream Rose-STL-Lab/LIMO fork). Format: outer+inner.
+  OUTER_SHA="$(git -C "$REPO_ROOT" rev-parse --short HEAD 2>/dev/null || echo 'no-git')"
+  INNER_SHA="$(git -C "$REPO_ROOT/limo" rev-parse --short HEAD 2>/dev/null || echo 'no-inner-git')"
+  GIT_SHA="${OUTER_SHA}+${INNER_SHA}"
   DM_SHA=""
   if [ -f "$DM_PKL" ]; then
     DM_SHA=$(shasum -a 256 "$DM_PKL" | cut -d' ' -f1)
   fi
   # MANIFEST.csv columns: path,sha256,n_rows,schema,source_step,ts,git_sha,dm_pkl_sha256
+  # git_sha format: <outer_short_sha>+<inner_short_sha>
   printf '%s,%s,%s,%s,%s,%s,%s,%s\n' "$PATH_ARG" "$SHA" "$N_ROWS" "$SCHEMA" "$STEP_ID" "$TS" "$GIT_SHA" "$DM_SHA" >> "$MANIFEST"
 fi
