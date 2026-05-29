@@ -12,8 +12,8 @@ thresholds:
   n_aromatic_min: 1
   max_consec_double: 4    # polyene cap
   max_consec_triple: 2    # alkyne cap
-  ring_size_min: 5
-  ring_size_max: 7
+  min_ring_size: 5        # renamed from ring_size_min per CK-3 (matches utils.py key)
+  max_ring_size: 7        # renamed from ring_size_max per CK-3
   pains_catalogs: ["PAINS_A", "PAINS_B", "PAINS_C", "BRENK", "NIH", "ZINC"]
 smoke_test:
   source_pdbqt_dir: "limo/ligands/0"
