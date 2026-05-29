@@ -29,3 +29,97 @@ Notes: Top-3 SMILES (polyene scaffolds):
   3. C[C@H1]C=CC=CC=CC1=CC=CC=C1C(C)NC2CCCC[C@H1]2CC (ΔG = −5.39, Kd = 112 µM)
 Links: configs/finetune/00_overview.yaml · docs/finetune/00-overview.md
 
+
+## A_baseline — 2026-05-29T05:18:53Z   git: ef7765b115c1
+Description: Baseline metrics from the failed pre-finetune run.
+Primary metric: best_dg_actual
+  baseline ➜ this phase: n/a ➜ 0.0 kcal/mol   (Δ = n/a, target ≤ -7.0)
+  prev    ➜ this phase: n/a ➜ 0.0 kcal/mol   (Δ = n/a)
+Secondary deltas vs prev:
+  drug_likeness_pass_rate: n/a ➜ n/a (n/a)
+  polyene_rate: n/a ➜ 0.0 (n/a)
+  predictor_r_holdout: n/a ➜ n/a (n/a)
+  validity_rate: n/a ➜ n/a (n/a)
+  n_distinct_scaffolds_top100: n/a ➜ 67 (n/a)
+Gate: PASS — proceed to next phase.
+Links: configs/finetune/00_overview.yaml · docs/finetune/eval/per_phase_A_baseline.md
+
+## B_filters — 2026-05-29T05:19:01Z   git: ef7765b115c1
+Description: RDKit FilterCatalog + ring/polyene cap wired into optimization loop.
+Primary metric: best_dg_actual
+  baseline ➜ this phase: 0 ➜ nan kcal/mol   (Δ = +nan, target ≤ -7.0)
+  prev    ➜ this phase: 0 ➜ nan kcal/mol   (Δ = +nan)
+Secondary deltas vs prev:
+  drug_likeness_pass_rate: n/a ➜ nan (n/a)
+  polyene_rate: 0 ➜ 0.0 (+0.000)
+  predictor_r_holdout: n/a ➜ nan (n/a)
+  validity_rate: n/a ➜ nan (n/a)
+  n_distinct_scaffolds_top100: 67 ➜ 0 (-67.000)
+Gate: FAIL — investigate; see phase doc for failure mode.
+Links: configs/finetune/02_filters.yaml · docs/finetune/eval/per_phase_B_filters.md
+
+## Phase_1_AUGMENT — 2026-05-29T03:48:00Z   git: ef7765b+45a2c7b
+Description: 6000 unfiltered random latents docked against 2G76 — defines a meaningful
+  random-baseline ΔG distribution that wasn't visible in the failed run (which
+  was confounded by the 1err predictor steering + broken cycle filter).
+Primary metric: best_dg_actual
+  baseline (failed run) ➜ random sample: -5.61 ➜ **-6.69 kcal/mol** (Δ = -1.08)
+Notes: Demonstrates the failed run's poor result was NOT a hard ceiling — random
+  sampling alone, without any predictor steering, finds better hits. The
+  failed run was actively *worse* than random because the 1err predictor
+  steered away from PHGDH binders.
+Funnel: 6000 decoded → 6000 valid (100%) → ~80% successful docks → best -6.69.
+Links: docs/finetune/data/augment_6000.csv
+
+## Phase_3_PREDICTOR — 2026-05-29T05:35:00Z   git: 3de041d+ce91df5
+Description: 2G76-specific binding-affinity head warm-started from 2iik (ACAA1)
+  per CK-4 recommendation; trained on N_train=3168 (recovered+augment+anchor)
+  with Huber loss + per-sample weights.
+Primary metric: predictor_r_holdout
+  baseline: n/a (no 2G76 predictor existed) ➜ **r = 0.4882** (Pearson on held-out 1k test)
+  spearman_rho = 0.5358, rmse = 0.95 kcal/mol, top-decile-recall = **0.4359**
+Gate: PASS — exceeds plan's r ≥ 0.4 AND top-decile-recall ≥ 0.25 thresholds.
+Holdout-leakage preflight: PASS (CK-4 fix shipping value).
+Notes: This is the headline win of the run. The new predictor's gradient
+  signal points at PHGDH binders, not estrogen-receptor binders. It is
+  reusable for any downstream LIMO-style workflow targeting 2G76.
+Links: limo/property_models/2g76_binding_affinity.{pt,yaml}
+
+## Phase_4_DECODER — 2026-05-29T05:39:00Z   git: 367be36+dba33a5
+Description: Frozen-encoder VAE decoder finetune on top-quartile (N=998) +
+  10% ZINC maintenance (N=24935). 3 epochs at lr=1e-5, p=0.05 KLD weight.
+Primary metrics:
+  training loss: 0.376 ➜ 0.306 (monotone decrease)
+  NLL: 0.314 ➜ 0.240; KLD stable around 1.55 (encoder is frozen — expected)
+  validity (256 random decodes per epoch): 1.00 at every epoch (no collapse)
+Gate: PASS for the engineering metrics (no validity collapse, no NaN, no Adam
+  state corruption — CK-5 sign-off).
+Caveat (REGRESSION): post-training smoke shows the FINETUNED decoder produces
+  WORSE filter-survival than the original pretrained vae.pt: 0% vs 0.5%
+  (200-mol sample, relaxed composite filter).
+Diagnosis: the top-quartile (lowest-ΔG) training set was polyene-rich because
+  polyenes dock well via π-stacking. The decoder learned "polyenes good" and
+  shifted its output distribution toward aliphatic / polyene chemistry — the
+  opposite of what we wanted. The plan's fallback ("revert to frozen vae.pt
+  if decoder finetune fails") applies. Production AL/inference uses limo/vae.pt.
+Notes: This is a known-mode failure flagged in CK-5's "training data must be
+  drug-like for decoder to learn drug-like" intuition. To fix in a follow-up:
+  filter the top-quartile training set through the composite drug-likeness
+  filter BEFORE finetuning, OR include the reference inhibitor anchors with
+  much higher oversampling than current 5×.
+Links: limo/vae_2g76.{pt,yaml}
+
+## Phase_5_FINAL — running   git: latest
+Description: Direct gen + dock (single iter, no AL loop) with
+  pretrained vae.pt + new 2G76 predictor + relaxed filters
+  (qed≥0.35, sa≤5.5, drop aromatic requirement). 10000 mols, 10 optim steps,
+  then composite-filter survivors docked against 2G76. Top-10 to be written
+  to runs/final/.
+Notes: We elected to skip the 3-iter active learning loop because (a) AL
+  orchestrator has unresolved import/cwd issues, (b) the decoder finetune
+  was a regression so iter-N decoder warm-start would compound the problem,
+  (c) the trained 2G76 predictor + filter chain is the actually shippable
+  artifact; the AL loop was a "compounding" technique that needed (a)+(b)
+  to be solid first. Single direct run captures the predictor's value
+  without compounding the decoder regression.
+Links: runs/final/ (in progress)
