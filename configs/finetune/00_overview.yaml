@@ -1,0 +1,27 @@
+# Phase 0 — Overview config (mostly metadata; phase 0 produces docs/scripts, no compute)
+phase_id: "00_overview"
+git_branch: "finetune-2g76"
+target:
+  pdb_id: "2G76"
+  chain: "A"
+  description: "PHGDH HHTH DNA-binding region, R162 contact (canonical R163)"
+  grid_center: [14.547, 25.866, 14.134]
+  grid_size_points: 60
+  grid_spacing_angstrom: 0.375
+  fld_path: "limo/2g76/2g76.maps.fld"
+hardware:
+  device_preference: ["cuda", "mps", "cpu"]
+  autodock_executable: "bin/autodock_gpu_128wi"
+  num_dock_devices: 1     # single Apple OpenCL device on M3
+baseline:
+  best_dg_kcal_mol: -5.61
+  best_kd_uM: 77
+  failure_mode: "polyene-dominant top-K, wrong-target predictor head"
+success:
+  best_dg_kcal_mol_max: -7.0
+  top10_polyene_rate_max: 0.0
+  top1_centroid_to_grid_center_angstrom_max: 4.0
+seed:
+  augment_dock: 20260528
+  frozen_eval_z: 42
+  split_rng: 20260528

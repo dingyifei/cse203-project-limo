@@ -1,0 +1,3 @@
+# Alias for 03_predictor_init.yaml — kept for backward-compatible reference from train_property_predictor.py
+# Source of truth: 03_predictor_init.yaml
+include: "03_predictor_init.yaml"

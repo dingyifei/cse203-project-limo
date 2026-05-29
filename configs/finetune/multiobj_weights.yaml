@@ -1,0 +1,8 @@
+# Multi-objective gradient weights for latent-space optimization in generate_molecules.py
+# Sign convention matches limo/generate_molecules.py:34 — `loss += sum(out) * weight`.
+# So MINIMIZE binding_affinity (negative ΔG ⇒ adding negative * positive weight pushes down further)
+# and MAXIMIZE qed / drug_likeness (negative weight on a positive-direction predictor maximizes it).
+binding_affinity: 5
+sa: 2
+qed: -4              # lowered from -8; QED alone was too permissive on polyenes
+drug_likeness: -10   # large negative on the new differentiable head (Phase 2d)

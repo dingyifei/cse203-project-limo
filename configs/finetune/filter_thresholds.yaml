@@ -1,0 +1,16 @@
+# Canonical filter thresholds — single source of truth.
+# Read by limo/utils.py:one_hots_to_passes_all and generate_molecules.py's filter chain.
+# Also referenced by tests/test_filters.py.
+mw_min: 200
+mw_max: 500
+rot_bonds_max: 8
+hbd_max: 5
+hba_max: 10
+qed_min: 0.5
+sa_max: 4.5
+n_aromatic_min: 1
+max_consec_double: 4
+max_consec_triple: 2
+ring_size_min: 5
+ring_size_max: 7
+pains_catalogs: ["PAINS_A", "PAINS_B", "PAINS_C", "BRENK", "NIH", "ZINC"]

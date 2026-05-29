@@ -1,0 +1,42 @@
+# Phase 1 — Data curation config
+phase_id: "01_data"
+recover_failed_run:
+  outs_dir: "limo/outs"
+  ligands_dir: "limo/ligands/0"
+  out_csv: "docs/finetune/data/run_failed_735.csv"
+  zero_pose_sentinel: "0.000   0.000   0.000  0.00  0.00"
+augment:
+  num_mols: 6000
+  seed: 20260528
+  protein_file: "2g76/2g76.maps.fld"
+  autodock_executable: "../bin/autodock_gpu_128wi"
+  out_csv: "docs/finetune/data/augment_6000.csv"
+  archive_before: "limo/outs.run_failed_735.tar"
+priors:
+  cache_dir: "docs/finetune/data/chembl_cache"
+  out_csv: "docs/finetune/data/priors_docked.csv"
+  parents:
+    - {name: "NCT-503",         chembl_id: "CHEMBL3402761", ic50_nM_phgdh: 2500,  doi: "10.1038/nchembio.2070"}
+    - {name: "CBR-5884",        chembl_id: null,            ic50_nM_phgdh: 33000, doi: "10.1021/cb500661g"}
+    - {name: "BI-4924",         chembl_id: null,            ic50_nM_phgdh: 10000, doi: "10.1021/acs.jmedchem.0c00892"}
+    - {name: "PKUMDL-WQ-2101",  chembl_id: null,            ic50_nM_phgdh: 50,    doi: "10.1021/acs.jmedchem.8b00789"}
+    - {name: "PKUMDL-WQ-2247",  chembl_id: null,            ic50_nM_phgdh: 80,    doi: "10.1021/acs.jmedchem.8b00789"}
+    - {name: "Disulfiram",      chembl_id: "CHEMBL964",     ic50_nM_phgdh: null,  doi: "10.3390/molecules24142545"}
+  similarity_threshold: 60
+  analogs_per_parent: 10
+  target_chembl_id: "CHEMBL3637"  # PHGDH
+  holdout_n: 20  # sequester for OOD eval — never train on these
+  smiles_to_z:
+    batched: true
+    num_adam_steps: 10000
+    lr: 0.1
+tensors:
+  out_dir: "docs/finetune/data/tensors"
+  weight_temperature_kcal_mol: 1.0
+  anchor_weight_multiplier: 5.0
+  split:
+    train_frac: 0.80
+    val_frac: 0.10
+    test_frac: 0.10
+    stratify_by: "delta_g_quartile_within_source"
+    rng_seed: 20260528

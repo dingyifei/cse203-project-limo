@@ -1,0 +1,26 @@
+# Phase 2 — Chemistry filter config (loaded by generate_molecules.py via --filter_config)
+phase_id: "02_filters"
+filter_in_loop: "soft"   # {none, soft, hard_log}
+thresholds:
+  mw_min: 200
+  mw_max: 500
+  rot_bonds_max: 8
+  hbd_max: 5
+  hba_max: 10
+  qed_min: 0.5            # raised from 0.4
+  sa_max: 4.5             # raised stringency from 5.5
+  n_aromatic_min: 1
+  max_consec_double: 4    # polyene cap
+  max_consec_triple: 2    # alkyne cap
+  ring_size_min: 5
+  ring_size_max: 7
+  pains_catalogs: ["PAINS_A", "PAINS_B", "PAINS_C", "BRENK", "NIH", "ZINC"]
+smoke_test:
+  source_pdbqt_dir: "limo/ligands/0"
+  acceptance_band: [0.05, 0.50]
+  tighten_on_high:
+    max_consec_double: 3
+    n_aromatic_min: 2
+  loosen_on_low:
+    qed_min: 0.45
+    sa_max: 5.0

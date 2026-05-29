@@ -1,0 +1,28 @@
+# Phase 4 — Initial decoder finetune (NEW limo/vae_finetune.py)
+phase_id: "04_decoder_init"
+init_ckpt: "limo/vae.pt"
+out_ckpt: "limo/vae_2g76.pt"
+epochs: 3
+batch_size: 256
+lr: 1.0e-5    # 10× lower than pretraining
+p: 0.05       # KLD weight (lower than pretraining's 0.1)
+freeze:
+  encoder: true
+  embedding: true
+  decoder: false
+data:
+  X: "docs/finetune/data/tensors/X.pt"
+  y: "docs/finetune/data/tensors/y.pt"
+  weights: "docs/finetune/data/tensors/weights.pt"
+  top_quartile_only: true
+maintenance:
+  source_smi: "limo/zinc250k.smi"
+  fraction: 0.10
+  seed: 0
+  per_sample_weight_multiplier: 0.1
+validity_gate:
+  decode_n: 256
+  min_parse_rate: 0.80
+  failure_doc: "docs/finetune/decoder_validity_failure.md"
+provenance:
+  out: "limo/vae_2g76.yaml"

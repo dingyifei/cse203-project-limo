@@ -1,0 +1,32 @@
+# LIMO runtime outputs (large, regenerable)
+limo/outs/
+limo/outs.*/
+limo/ligands/
+limo/logs/
+limo/run_full.log
+limo/core.*
+runs/
+
+# Model checkpoints — large binaries, tracked via provenance YAML + sha256 in MANIFEST.csv
+# (Comment these out if you want them in git; otherwise rely on the MANIFEST for traceability.)
+*.pt
+!docs/finetune/eval/frozen_z.pt
+!docs/finetune/data/tensors/*.pt
+
+# Pickles
+*.pkl
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+
+# OS / editor
+.DS_Store
+*.swp
+.vscode/
+.idea/
+
+# Conda env-info dumps
+env_dump.yml

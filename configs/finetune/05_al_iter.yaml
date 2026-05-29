@@ -1,0 +1,34 @@
+# Phase 5 — Active-learning iteration config (shared by iter 1, 2, 3; iter id passed via CLI)
+phase_id: "05_al_iter"
+max_iters: 3
+gen:
+  num_mols: 10000              # B
+  optim_steps: 10
+  multiobj_weights: "configs/finetune/multiobj_weights.yaml"
+  filter_config: "configs/finetune/filter_thresholds.yaml"
+rank:
+  top_n: 2000                  # N — sent to docking
+  diversity:
+    tanimoto_radius: 0.4
+    fingerprint: "morgan"
+    morgan_radius: 2
+    morgan_bits: 2048
+dock:
+  protein_file: "2g76/2g76.maps.fld"
+  autodock_executable: "../bin/autodock_gpu_128wi"
+retrain:
+  predictor:
+    warm_start_chain: true    # iter i warm-starts from iter i-1's checkpoint
+    epochs: 5
+  decoder:
+    epochs: 1
+    top_quartile_only: true
+    include_priors: true
+abort:
+  best_dg_no_improvement_kcal_mol: 0.1   # iter i must beat iter i-1 by this much
+  validity_floor: 0.80
+  polyene_rate_ceiling: 0.30
+  wall_time_budget_hr: 1.5                # per-iter
+  total_wall_time_hr: 9.0                 # if projection > this, drop iter 3
+output:
+  iter_dir_template: "runs/al_iter_{i}"

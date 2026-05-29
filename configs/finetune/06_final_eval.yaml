@@ -1,0 +1,16 @@
+# Phase 6 — Final evaluation & report
+phase_id: "06_final_eval"
+top_k_redock: 10
+redock:
+  autodock_executable: "../bin/autodock_gpu_128wi"
+  protein_file: "2g76/2g76.maps.fld"
+  nrun: 50                      # higher-exhaustiveness redock (vs default -s 0)
+  out_csv: "docs/finetune/data/final_top10_docked.csv"
+overlay:
+  reference_ligand_pdb: "limo/2g76/ligand_ref.pdb"
+  grid_center: [14.547, 25.866, 14.134]
+  centroid_to_grid_max_angstrom: 4.0
+report:
+  out: "docs/finetune/06-final-report.md"
+  fig_dir: "docs/finetune/figs"
+  metrics_csv: "docs/finetune/eval/per_phase_metrics.csv"
