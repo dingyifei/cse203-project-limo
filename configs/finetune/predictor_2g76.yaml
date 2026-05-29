@@ -1,3 +1,28 @@
-# Alias for 03_predictor_init.yaml — kept for backward-compatible reference from train_property_predictor.py
-# Source of truth: 03_predictor_init.yaml
-include: "03_predictor_init.yaml"
+# Alias for configs/finetune/03_predictor_init.yaml — kept as a real copy because
+# YAML has no native include. Source of truth: 03_predictor_init.yaml.
+# If you edit one, edit both (or delete this file and update any references).
+phase_id: "03_predictor_init"
+warm_start_path: "property_models/2iik_binding_affinity.pt"   # ACAA1 (geometrically closer to PHGDH than 1err)
+max_epochs: 3
+batch_size: 100
+lr: 1.0e-4         # disable auto_lr_find when warm-starting
+huber_delta: 1.0   # kcal/mol, robust to ΔG=0 placeholder rows from failed docks
+sample_weights:
+  source_recovered_735: 0.5
+  source_augment_6000: 1.0
+  source_anchor_priors: 3.0
+data:
+  tensors_dir: "docs/finetune/data/tensors"
+  X: "docs/finetune/data/tensors/X.pt"
+  y: "docs/finetune/data/tensors/y.pt"
+  weights: "docs/finetune/data/tensors/weights.pt"
+  splits: "docs/finetune/data/tensors/splits.json"
+  holdout_priors: "docs/finetune/eval/holdout_priors.csv"
+output:
+  state_dict: "limo/property_models/2g76_binding_affinity.pt"
+  provenance: "limo/property_models/2g76_binding_affinity.yaml"
+  fig: "docs/finetune/figs/03-predictor-pred-vs-true.png"
+accept_gate:
+  pearson_r_min: 0.4
+  top_decile_recall_min: 0.25
+  pred_priors_median_below_random: true

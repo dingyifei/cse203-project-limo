@@ -50,7 +50,29 @@ if [ -n "$STEP_ID" ]; then
   if [ -f "$DM_PKL" ]; then
     DM_SHA=$(shasum -a 256 "$DM_PKL" | cut -d' ' -f1)
   fi
+
+  mkdir -p "$(dirname "$MANIFEST")"
+
+  # Preformat the row, then append under a portable mkdir-lock so concurrent
+  # writers can't interleave a single CSV line.
+  ROW=$(printf '%s,%s,%s,%s,%s,%s,%s,%s\n' "$PATH_ARG" "$SHA" "$N_ROWS" "$SCHEMA" "$STEP_ID" "$TS" "$GIT_SHA" "$DM_SHA")
+  LOCK="${MANIFEST}.lock"
+  ACQUIRED=0
+  for _ in $(seq 1 200); do
+    if mkdir "$LOCK" 2>/dev/null; then
+      ACQUIRED=1
+      trap 'rmdir "$LOCK" 2>/dev/null || true' EXIT
+      break
+    fi
+    sleep 0.1
+  done
+
   # MANIFEST.csv columns: path,sha256,n_rows,schema,source_step,ts,git_sha,dm_pkl_sha256
   # git_sha format: <outer_short_sha>+<inner_short_sha>
-  printf '%s,%s,%s,%s,%s,%s,%s,%s\n' "$PATH_ARG" "$SHA" "$N_ROWS" "$SCHEMA" "$STEP_ID" "$TS" "$GIT_SHA" "$DM_SHA" >> "$MANIFEST"
+  printf '%s' "$ROW" >> "$MANIFEST"
+
+  if [ "$ACQUIRED" = "1" ]; then
+    rmdir "$LOCK" 2>/dev/null || true
+    trap - EXIT
+  fi
 fi
