@@ -456,36 +456,117 @@ def build_report(
     return 0
 
 
+def _load_yaml(path: Path) -> Dict[str, Any]:
+    try:
+        import yaml  # type: ignore
+    except Exception as exc:  # pragma: no cover
+        raise RuntimeError(
+            f"PyYAML is required to parse --config={path}; install it or pass the individual flags instead"
+        ) from exc
+    with path.open() as f:
+        return yaml.safe_load(f) or {}
+
+
+def _resolve_path(p: str) -> Path:
+    """Resolve a YAML-supplied path: absolute kept as-is, relative anchored at repo root."""
+    if not p:
+        return Path()
+    path = Path(p)
+    if path.is_absolute():
+        return path
+    return (_REPO_ROOT / path).resolve()
+
+
 def _build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description="Generate the LIMO 2G76 finetune final report (Phase 6)")
+    p.add_argument("--config",
+                   default=None,
+                   help="Phase 6 YAML config (e.g. configs/finetune/06_final_eval.yaml). "
+                        "If provided, populates defaults for --metrics_csv, --top10_csv, --out, "
+                        "and --fig_dir from its `report.*` / `redock.out_csv` keys. "
+                        "Explicit CLI flags still win.")
     p.add_argument("--metrics_csv",
-                   default="docs/finetune/eval/per_phase_metrics.csv",
+                   default=None,
                    help="per-phase metrics CSV (the canonical source of truth)")
     p.add_argument("--top10_csv",
-                   default="docs/finetune/data/final_top10_docked.csv",
+                   default=None,
                    help="top-10 redock CSV (smiles, predicted_dg, actual_dg)")
     p.add_argument("--priors_csv",
-                   default="docs/finetune/data/priors_docked.csv",
+                   default=None,
                    help="reference inhibitor CSV (smiles, name, docked dg) for Tanimoto lookup")
     p.add_argument("--out", dest="report",
-                   default="docs/finetune/06-final-report.md",
+                   default=None,
                    help="output report markdown path")
-    p.add_argument("--fig_dir", default="docs/finetune/figs",
+    p.add_argument("--fig_dir", default=None,
                    help="directory to write generated figures into")
-    p.add_argument("--docs_dir", default="docs/finetune",
+    p.add_argument("--docs_dir", default=None,
                    help="directory containing per-step .md files (parsed for Decisions blocks)")
     return p
 
 
+# Defaults applied when neither --config nor explicit flags supply a value.
+_FALLBACK_DEFAULTS: Dict[str, str] = {
+    "metrics_csv": "docs/finetune/eval/per_phase_metrics.csv",
+    "top10_csv": "docs/finetune/data/final_top10_docked.csv",
+    "priors_csv": "docs/finetune/data/priors_docked.csv",
+    "report": "docs/finetune/06-final-report.md",
+    "fig_dir": "docs/finetune/figs",
+    "docs_dir": "docs/finetune",
+}
+
+
+def _resolve_args(args: argparse.Namespace) -> Dict[str, Path]:
+    """Merge --config defaults with CLI overrides; missing keys fall back to _FALLBACK_DEFAULTS."""
+    cfg_values: Dict[str, str] = {}
+    if args.config:
+        cfg_path = _resolve_path(args.config)
+        if not cfg_path.exists():
+            raise FileNotFoundError(f"--config not found: {cfg_path}")
+        cfg = _load_yaml(cfg_path)
+        report_section = cfg.get("report", {}) or {}
+        redock_section = cfg.get("redock", {}) or {}
+        if report_section.get("metrics_csv"):
+            cfg_values["metrics_csv"] = report_section["metrics_csv"]
+        if redock_section.get("out_csv"):
+            cfg_values["top10_csv"] = redock_section["out_csv"]
+        if report_section.get("out"):
+            cfg_values["report"] = report_section["out"]
+        if report_section.get("fig_dir"):
+            cfg_values["fig_dir"] = report_section["fig_dir"]
+        # priors_docked and docs_dir aren't in the canonical Phase 6 YAML but support them if present.
+        if report_section.get("priors_csv"):
+            cfg_values["priors_csv"] = report_section["priors_csv"]
+        if report_section.get("docs_dir"):
+            cfg_values["docs_dir"] = report_section["docs_dir"]
+
+    def _pick(name: str) -> Path:
+        explicit = getattr(args, name, None)
+        if explicit:
+            return _resolve_path(explicit)
+        if name in cfg_values:
+            return _resolve_path(cfg_values[name])
+        return _resolve_path(_FALLBACK_DEFAULTS[name])
+
+    return {
+        "metrics_csv": _pick("metrics_csv"),
+        "top10_csv": _pick("top10_csv"),
+        "priors_csv": _pick("priors_csv"),
+        "report": _pick("report"),
+        "fig_dir": _pick("fig_dir"),
+        "docs_dir": _pick("docs_dir"),
+    }
+
+
 def main(argv: Optional[Sequence[str]] = None) -> int:
     args = _build_parser().parse_args(argv)
+    paths = _resolve_args(args)
     return build_report(
-        metrics_csv=Path(args.metrics_csv),
-        top10_csv=Path(args.top10_csv),
-        priors_csv=Path(args.priors_csv),
-        report_path=Path(args.report),
-        fig_dir=Path(args.fig_dir),
-        docs_dir=Path(args.docs_dir),
+        metrics_csv=paths["metrics_csv"],
+        top10_csv=paths["top10_csv"],
+        priors_csv=paths["priors_csv"],
+        report_path=paths["report"],
+        fig_dir=paths["fig_dir"],
+        docs_dir=paths["docs_dir"],
     )
 
 
