@@ -40,6 +40,15 @@ eval_phase() {
   scripts/eval_phase.py "$@" || echo "warn: eval_phase $* exited non-zero — gate logged, continuing"
 }
 
+# CWD convention (matters for config path resolution):
+#  - cd_limo: cwd=$REPO_ROOT/limo/. Scripts launched from here (train_property_predictor.py,
+#    generate_molecules.py, curation/*) use config paths that start with ../docs/... to climb
+#    to the outer repo for the data dir.
+#  - cd_root: cwd=$REPO_ROOT. scripts/* (eval_phase, run_active_learning, build_final_report)
+#    are launched from here and resolve config paths from this directory.
+#  - vae_finetune.py is special: it has an internal _LIMO_REPO_ROOT that locates the OUTER
+#    repo regardless of cwd, so 04_decoder_init.yaml uses outer-relative paths (docs/...,
+#    limo/vae.pt) — see that config for details.
 cd_limo() { cd "$REPO_ROOT/limo"; }
 cd_root() { cd "$REPO_ROOT"; }
 
