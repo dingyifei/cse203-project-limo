@@ -1,0 +1,8 @@
+seq,source,rank,name,smiles,delta_g_mean,delta_g_std,delta_g_min,kd_uM,n_seeds,dlg_path
+1,limo,2,limo_2,C1CCC=CC=C1CCC=CC=C2CC=CC3=CC=CC=C23,-5.0676,0.266439936946397,-5.48,96.19048736447861,50,/Users/yifeiding/projects/school/BENG203/limo/limo/outs_nrun50/ligand0.dlg
+3,limo,4,limo_4,CC=CC1=CC(C)C(C)CC1CCC(C)NC2=CC=C(C)C=C2Cl,-4.0496,0.5853032034766255,-5.12,176.60945744563796,50,/Users/yifeiding/projects/school/BENG203/limo/limo/outs_nrun50/ligand1.dlg
+0,limo,1,limo_1,C1[C@@H1]CCC2[C@H1]1OC(C)=C2C=3CCC4=CC=CC=C4C=3,-4.9796,0.10603697468336218,-5.09,185.78220322724178,50,/Users/yifeiding/projects/school/BENG203/limo/limo/outs_nrun50/ligand2.dlg
+14,tengen,5,tengen_5,C[C@@H](C(=O)N1CCOCC1)N1CC[C@H](NS(=O)(=O)c2ccc3cc(Cl)ccc3c2)C1=O,-4.84,0.4621385073763059,-5.95,43.51307090794746,50,/Users/yifeiding/projects/school/BENG203/limo/limo/outs_nrun50/ligand3.dlg
+15,tengen,6,tengen_6,CC1(C)S[C@@H]2[C@H](NC(=O)Cc3ccccc3)C(=O)N2[C@H]1C(=O)O,-3.9128,0.42271522328868166,-4.74,335.39446352993116,50,/Users/yifeiding/projects/school/BENG203/limo/limo/outs_nrun50/ligand4.dlg
+12,tengen,3,tengen_3,Cc1ncsc1-c1ccc(CNC(=O)[C@@H]2C[C@@H](O)CN2C(=O)[C@@H](NC(=O)CO)C(C)(C)C)cc1,-3.2858,0.5888228596105963,-4.49,511.4546847424697,50,/Users/yifeiding/projects/school/BENG203/limo/limo/outs_nrun50/ligand5.dlg
+20,control,1,NCT-503,CC(=O)Nc1ccc(NS(=O)(=O)c2ccc(Cl)cc2)cc1,-4.5188,0.10193409635642041,-4.59,432.02278505129874,50,/Users/yifeiding/projects/school/BENG203/limo/limo/outs_nrun50/ligand6.dlg
