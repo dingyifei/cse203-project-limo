@@ -1,0 +1,84 @@
+{
+  "results": [
+    {
+      "chembl_id": "CHEMBL964",
+      "smiles": "CCN(CC)C(=S)SSC(=S)N(CC)CC",
+      "similarity": "100"
+    },
+    {
+      "chembl_id": "CHEMBL4227735",
+      "smiles": "CCN(CC)C(=S)SSC",
+      "similarity": "75"
+    },
+    {
+      "chembl_id": "CHEMBL4224759",
+      "smiles": "CCSSC(=S)N(CC)CC",
+      "similarity": "71.428573131561279296875"
+    },
+    {
+      "chembl_id": "CHEMBL2004297",
+      "smiles": "CCN(CC)C(=S)SC(=S)N(CC)CC",
+      "similarity": "68.42105388641357421875"
+    },
+    {
+      "chembl_id": "CHEMBL4858425",
+      "smiles": "CCN(CCO)C(=S)SSC(=S)N(CC)CCO",
+      "similarity": "68.1818187236785888671875"
+    },
+    {
+      "chembl_id": "CHEMBL5417591",
+      "smiles": "CCN(CC)CC(=S)SSC(=S)N(CC)CC",
+      "similarity": "66.6666686534881591796875"
+    },
+    {
+      "chembl_id": "CHEMBL4229120",
+      "smiles": "CCCSSC(=S)N(CC)CC",
+      "similarity": "65.2173936367034912109375"
+    },
+    {
+      "chembl_id": "CHEMBL1097570",
+      "smiles": "CCN(CC)C(=S)SSC(C)C",
+      "similarity": "65.2173936367034912109375"
+    },
+    {
+      "chembl_id": "CHEMBL1745",
+      "smiles": "CCN(CC)C(=S)SC",
+      "similarity": "64.999997615814208984375"
+    },
+    {
+      "chembl_id": "CHEMBL1094278",
+      "smiles": "CCN(CC)C(=S)SSCCO",
+      "similarity": "62.5"
+    },
+    {
+      "chembl_id": "CHEMBL4757113",
+      "smiles": "CCCN(CCC)C(=S)SSC(=S)N(CCC)CCC",
+      "similarity": "61.9047641754150390625"
+    },
+    {
+      "chembl_id": "CHEMBL570813",
+      "smiles": "CCN(CC)C(=S)SCSC(=S)N(CC)CC",
+      "similarity": "61.9047641754150390625"
+    },
+    {
+      "chembl_id": "CHEMBL4226712",
+      "smiles": "CCN(CC)C(=S)SSCC(C)C",
+      "similarity": "60.000002384185791015625"
+    },
+    {
+      "chembl_id": "CHEMBL1098280",
+      "smiles": "CCC(C)SSC(=S)N(CC)CC",
+      "similarity": "60.000002384185791015625"
+    },
+    {
+      "chembl_id": "CHEMBL1098279",
+      "smiles": "CCCCSSC(=S)N(CC)CC",
+      "similarity": "60.000002384185791015625"
+    },
+    {
+      "chembl_id": "CHEMBL567397",
+      "smiles": "CCCCCCCCCCCCCCCCN(CC)C(=S)SSC(=S)N(CC)CCCCCCCCCCCCCC",
+      "similarity": "60.000002384185791015625"
+    }
+  ]
+}

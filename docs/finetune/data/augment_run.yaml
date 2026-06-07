@@ -1,0 +1,11 @@
+phase: augment_dock
+num_mols: 6000
+seed: 20260528
+protein_file: 2g76/2g76.maps.fld
+autodock_executable: ../bin/autodock_gpu_128wi
+vae_checkpoint: vae.pt
+vae_sha256: 30bd21969c87a4aa09d1e6b353eb6cfef8d542e79c43ca588219a1500225a10b
+dm_pkl_sha256: a1f339d5053721ef99ae5ff1338021fff05d5ca24305cff659a4047c6a68cfe2
+started_at: '2026-05-29T05:02:36Z'
+n_valid_decodes: 6000
+best_dg_kcal_mol: -6.69

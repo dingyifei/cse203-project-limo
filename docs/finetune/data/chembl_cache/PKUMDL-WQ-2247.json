@@ -1,0 +1,14 @@
+{
+  "results": [
+    {
+      "chembl_id": "CHEMBL2393263",
+      "smiles": "Fc1ccc(Nc2nc(NC3CCCC3)nc3[nH]ncc23)cc1",
+      "similarity": "61.5384638309478759765625"
+    },
+    {
+      "chembl_id": "CHEMBL2393262",
+      "smiles": "Fc1ccc(Nc2nc(NC3CCCCC3)nc3[nH]ncc23)cc1",
+      "similarity": "60.3773593902587890625"
+    }
+  ]
+}

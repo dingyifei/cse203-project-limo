@@ -1,0 +1,3 @@
+phase_id,vae_sha,predictor_sha,filter_cfg_sha,n_decoded,n_pass_filter,n_docked,best_dg_actual,mean_top10_dg,mean_top100_dg,predictor_r_holdout,predictor_top_decile_recall,drug_likeness_pass_rate,polyene_rate,mean_qed_top100,mean_sa_top100,n_distinct_scaffolds_top100,diversity_top100,validity_rate,delta_best_dg_vs_baseline,delta_best_dg_vs_prev_phase,gate_passed,ts,git_sha
+A_baseline,30bd21969c87a4aa,c8ed6e7c43b595de,c5c6c399bec0d3c0,5150,0,5150,0,0,0,,,,0,0.447836,7.06879,67,0.906392,,0,,True,2026-05-29T05:18:53Z,ef7765b115c11878ce2d43c9c5d55e9f5b12a68b
+B_filters,30bd21969c87a4aa,c8ed6e7c43b595de,c5c6c399bec0d3c0,0,0,0,nan,nan,nan,nan,nan,nan,0,nan,nan,0,nan,nan,nan,nan,False,2026-05-29T05:19:01Z,ef7765b115c11878ce2d43c9c5d55e9f5b12a68b
